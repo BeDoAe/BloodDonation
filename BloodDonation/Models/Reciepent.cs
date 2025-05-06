@@ -13,7 +13,6 @@ namespace BloodDonation.Models
 
         public TypeOfBlood Blood { get; set; }
 
-        public List<UserHealthStatus>? userHealthStatuses { get; set; }
 
         public List<RequestBlood>? requestBloods { get; set; }
         public DateTime? LastHealthCheck { get; set; }

@@ -52,7 +52,7 @@ namespace BloodDonation.Models
             // UserHealthStatus now correctly links to ApplicationUser
             modelBuilder.Entity<UserHealthStatus>()
                 .HasOne(u => u.User)
-                .WithMany()
+                .WithMany(a => a.UserHealthStatuses)
                 .HasForeignKey(u => u.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
@@ -62,6 +62,10 @@ namespace BloodDonation.Models
                 .WithMany()
                 .HasForeignKey(u => u.HealthStatusId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<HealthQuestion>()
+               .Property(hq => hq.Id)
+               .ValueGeneratedOnAdd(); // Makes it auto-increment
 
 
             //modelBuilder.Entity<UserHealthStatus>()

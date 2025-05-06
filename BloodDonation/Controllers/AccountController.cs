@@ -5,10 +5,15 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace BloodDonation.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class AccountController : Controller
     {
 
@@ -16,15 +21,17 @@ namespace BloodDonation.Controllers
         private readonly IAccountService _accountService;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly IConfiguration configuration;
 
-        public AccountController(IAccountService accountService , UserManager<ApplicationUser> userManager , SignInManager<ApplicationUser> signInManager)
+        public AccountController(IAccountService accountService , UserManager<ApplicationUser> userManager , SignInManager<ApplicationUser> signInManager , IConfiguration configuration)
         {
             _accountService = accountService;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.configuration = configuration;
         }
 
-
+        [HttpGet]
         public IActionResult Home()
         {
             return View();
@@ -81,37 +88,40 @@ namespace BloodDonation.Controllers
                 return Unauthorized("Invalid username or password.");
 
             var roles = await userManager.GetRolesAsync(user);
-            string userRole = roles.FirstOrDefault() ?? "Unknown"; // Get first role or default to "Unknown"
+            string role = roles.FirstOrDefault() ?? "Unknown";
 
-            // **1️⃣ Create Claims**
-            List<Claim> claims = new List<Claim>
-                  {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, userRole)
-                   };
+            // 1️⃣ Add Claims
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(ClaimTypes.Email, user.Email),
+        new Claim(ClaimTypes.Role, role)
+    };
 
-            // **2️⃣ Create Identity & Principal**
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            // 2️⃣ Generate JWT Token
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds
+            );
+            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-            // **3️⃣ Sign In the User with Claims**
-            await signInManager.SignInAsync(user, model.RememberMe);
-
-            // **4️⃣ Return User Data**
-            var response = new LoginResponseDTO
+            // 3️⃣ Return token in response
+            return Ok(new
             {
-                Id = user.Id,
-                Name = user.Name,
-                UserName = user.UserName,
-                Email = user.Email,
-                Address = user.Address,
-                PhoneNumber = user.PhoneNumber,
-                Role = userRole
-            };
-
-            return Ok(response);
+                token = jwtToken,
+                expiration = token.ValidTo,
+                id = user.Id,
+                name = user.Name,
+                userName = user.UserName,
+                email = user.Email,
+                address = user.Address,
+                phoneNumber = user.PhoneNumber,
+                role = role
+            });
         }
 
         [HttpPost("logout")]

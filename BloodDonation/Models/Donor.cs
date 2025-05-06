@@ -14,7 +14,6 @@ namespace BloodDonation.Models
 
       
 
-        public List<UserHealthStatus>? userHealthStatuses { get; set; }
 
         public List<DonateBlood>? donateBloods { get; set; }
 
