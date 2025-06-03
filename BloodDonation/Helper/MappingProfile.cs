@@ -4,6 +4,8 @@ using BloodDonation.DTOs.DonatBloodDTOs;
 using BloodDonation.DTOs.DonorDTOs;
 using BloodDonation.DTOs.HealthStatusDTOs;
 using BloodDonation.DTOs.Hospital;
+using BloodDonation.DTOs.ReciepentDTOs;
+using BloodDonation.DTOs.RequestBloodDTOs;
 using BloodDonation.DTOs.UserHealthStatusDTOs;
 using BloodDonation.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -37,10 +39,13 @@ namespace BloodDonation.Helper
             CreateMap<DonateBlood, DonateBloodDTO>().ReverseMap();
 
             CreateMap<Donor, DonorDTO>().ReverseMap();
+
             CreateMap<Hospital, HospitalDTO>().ReverseMap();
 
 
+            CreateMap<RequestBlood, RequestBloodDTO>().ReverseMap();
 
+            CreateMap<Reciepent, RecpientDTO>().ReverseMap();
         }
     }
 }

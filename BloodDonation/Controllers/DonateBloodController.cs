@@ -20,7 +20,7 @@ namespace BloodDonation.Controllers
         {
             this.donateBloodService = donateBloodService;
         }
-        // GET: api/AllDonationBloodOfUser/{id}
+        // GET: api/AllDonationBloodOfUser
         [HttpGet("GetAllDonationsByUser")]
         public async Task<ActionResult<List<DonateBloodDTO>>> GetAllDonationsByUser()
         {
@@ -87,6 +87,7 @@ namespace BloodDonation.Controllers
             if (string.IsNullOrEmpty(id))
                 return Unauthorized("User ID not found in token.");
             dto.DonorID = id;
+            dto.Id = DonateId;
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await donateBloodService.EditDonate(DonateId, dto);

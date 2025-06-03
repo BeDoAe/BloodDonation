@@ -9,6 +9,8 @@ using BloodDonation.Repositories.UserHealthStatusRepo;
 using BloodDonation.Services.AccountServ;
 using BloodDonation.Services.DonateBloodServ;
 using BloodDonation.Services.HealthStatusServ;
+using BloodDonation.Services.HospitalServ;
+using BloodDonation.Services.RequestBloodServ;
 using BloodDonation.Services.UserHealthStatusServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -112,16 +114,16 @@ builder.Services.AddScoped<IHealthStatusService, HealthStatusService>();
 builder.Services.AddScoped<IUserHealthStatusRepoistory, UserHealthStatusRepoistory>();
 builder.Services.AddScoped<IUserHealthStatusService, UserHealthStatusService>();
 
-//builder.Services.AddScoped<IRequestBloodRepository, RequestBloodRepository>();
-//builder.Services.AddScoped<IRequestBloodService, RequestBloodService>();
+builder.Services.AddScoped<IRequestBloodRepository, RequestBloodRepository>();
+builder.Services.AddScoped<IRequestBloodService, RequestBloodService>();
 
 
 builder.Services.AddScoped<IDonateBloodRepository, DonateBloodRepository>();
 builder.Services.AddScoped<IDonateBloodService, DonateBloodService>();
 
 
-//builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
-//builder.Services.AddScoped<IHospitalService, HospitalService>();
+builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
+builder.Services.AddScoped<IHospitalService, HospitalService>();
 
 
 

@@ -68,10 +68,11 @@ namespace BloodDonation.Repositories.RequestBloodRepo
 
             if (reciepent == null || hospital == null || requestBlood.Amount > 0 || requestBloodFromDB == null) return null;
             requestBloodFromDB.HospitalID = requestBlood.HospitalID;
+            hospital.TotalBloodAmount += requestBloodFromDB.Amount;
+
             requestBloodFromDB.Amount = requestBlood.Amount;
             requestBloodFromDB.RequestTime = DateTime.Now;
 
-            hospital.TotalBloodAmount += requestBloodFromDB.Amount;
             hospital.TotalBloodAmount -= requestBlood.Amount;
             context.Update(requestBloodFromDB);
             await SaveDB();

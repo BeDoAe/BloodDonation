@@ -67,12 +67,13 @@ namespace BloodDonation.Repositories.DonateBloodRepo
             Hospital hospital = await context.Hospitals.FirstOrDefaultAsync(h => h.Id == donateBlood.HospitalID);
             DonateBlood donateBloodFromDB = await context.DonateBloods.FirstOrDefaultAsync(db => db.Id == id);
 
-            if (donor == null || hospital == null || donateBlood.Amount > 0 || donateBloodFromDB==null) return null;
+            if (donor == null || hospital == null || donateBlood.Amount < 0 || donateBloodFromDB==null) return null;
             donateBloodFromDB.HospitalID = donateBlood.HospitalID;
+            hospital.TotalBloodAmount -= donateBloodFromDB.Amount;
+
             donateBloodFromDB.Amount = donateBlood.Amount;
             donateBloodFromDB.DonationTime= DateTime.Now;
 
-            hospital.TotalBloodAmount -= donateBloodFromDB.Amount;
             hospital.TotalBloodAmount += donateBlood.Amount;
             context.Update(donateBloodFromDB);
             await SaveDB();
