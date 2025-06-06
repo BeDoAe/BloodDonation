@@ -1,6 +1,7 @@
 ﻿using BloodDonation.Models;
 using BloodDonation.Repositories.GenericRepo;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BloodDonation.Repositories.HospitalRepo
@@ -15,12 +16,21 @@ namespace BloodDonation.Repositories.HospitalRepo
         }
         public async Task<List<Donor>> getAllDonorsOfHospital(string id)
         {
-            List<Donor> donors = await context.Donors.Where(h=>h.Id==id).ToListAsync();
+            var donors = await context.Donors
+                .Include(d => d.donateBloods)
+                    .ThenInclude(db => db.Hospital)
+                .Where(d => d.donateBloods.Any(db => db.HospitalID == id))
+                .ToListAsync();
             return donors;
         }
         public async Task<List<Reciepent>> getAllReciepentsOfHospital(string id)
         {
-            List<Reciepent> Reciepents = await context.Reciepents.Where(h => h.Id == id).ToListAsync();
+            var Reciepents = await context.Reciepents
+                .Include(d => d.requestBloods)
+                .ThenInclude(db => db.Hospital)
+                .Where(d => d.requestBloods.Any(db => db.HospitalID == id))
+                .ToListAsync();
+
             return Reciepents;
         }
 

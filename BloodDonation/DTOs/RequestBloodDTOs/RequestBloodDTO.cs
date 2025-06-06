@@ -8,7 +8,7 @@ namespace BloodDonation.DTOs.RequestBloodDTOs
     {
         public int Id { get; set; }
 
-        public string ReciepentID { get; set; }
+        public string? ReciepentID { get; set; }
         public RecpientDTO? Reciepent { get; set; }
 
         public string HospitalID { get; set; }

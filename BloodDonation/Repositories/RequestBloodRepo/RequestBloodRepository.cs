@@ -52,7 +52,7 @@ namespace BloodDonation.Repositories.RequestBloodRepo
             Reciepent reciepent = await context.Reciepents.FirstOrDefaultAsync(d => d.Id == requestBlood.ReciepentID);
             Hospital hospital = await context.Hospitals.FirstOrDefaultAsync(h => h.Id == requestBlood.HospitalID);
 
-            if (reciepent == null || hospital == null || requestBlood.Amount > 0) return null;
+            if (reciepent == null || hospital == null || requestBlood.Amount < 0) return null;
 
             await context.AddAsync(requestBlood);
             hospital.TotalBloodAmount -= requestBlood.Amount;
@@ -66,7 +66,7 @@ namespace BloodDonation.Repositories.RequestBloodRepo
             Hospital hospital = await context.Hospitals.FirstOrDefaultAsync(h => h.Id == requestBlood.HospitalID);
             RequestBlood requestBloodFromDB = await context.RequestBloods.FirstOrDefaultAsync(db => db.Id == requestBlood.Id);
 
-            if (reciepent == null || hospital == null || requestBlood.Amount > 0 || requestBloodFromDB == null) return null;
+            if (reciepent == null || hospital == null || requestBlood.Amount < 0 || requestBloodFromDB == null) return null;
             requestBloodFromDB.HospitalID = requestBlood.HospitalID;
             hospital.TotalBloodAmount += requestBloodFromDB.Amount;
 

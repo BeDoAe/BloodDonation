@@ -82,9 +82,9 @@ namespace BloodDonation.Controllers
             return Ok(result);
         }
 
-        // PUT: api/RequestBlood/EditRequest/{id}
-        [HttpPut("EditRequest/{id}")]
-        public async Task<ActionResult<RequestBloodDTO>> EditRequest(int id, [FromBody] RequestBloodDTO dto)
+        // PUT: api/RequestBlood/EditRequest
+        [HttpPut("EditRequest")]
+        public async Task<ActionResult<RequestBloodDTO>> EditRequest([FromBody] RequestBloodDTO dto)
         {
             string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -92,7 +92,7 @@ namespace BloodDonation.Controllers
                 return Unauthorized("User ID not found in token.");
 
             dto.ReciepentID = userId;
-            dto.Id = id;
+
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await requestBloodService.EditRequest(dto);
